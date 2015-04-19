@@ -6,6 +6,7 @@ public class Cola<E> {
 
     private LinkedList<E> queue;
     private QueueState state;
+    private int maxSize;
 
     public Cola() {
         queue = new LinkedList<E>();
@@ -13,16 +14,19 @@ public class Cola<E> {
     }
 
     public synchronized void add(E item) {
-        if (state == QueueState.CLOSED) return;
-
-        while (state == QueueState.OPENED) {
+        if (state == QueueState.CLOSED) {
+            return;
+        } else {
             try {
                 wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
         queue.addLast(item);
+        if (queue.size() > maxSize) maxSize++;
+
         notifyAll();
     }
 
@@ -32,15 +36,19 @@ public class Cola<E> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         queue.addFirst(item);
+        if (queue.size() > maxSize) maxSize++;
+
         notifyAll();
     }
 
     public synchronized E attend() {
         try {
-            wait();
+            if (state == QueueState.CLOSED) return null;
+            wait(10000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return null;
         }
         E firstElement = queue.poll();
         notifyAll();
@@ -58,5 +66,9 @@ public class Cola<E> {
 
     public int size() {
         return queue.size();
+    }
+
+    public int maxSize() {
+        return maxSize;
     }
 }

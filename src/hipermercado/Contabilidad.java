@@ -2,22 +2,22 @@ package hipermercado;
 
 public class Contabilidad {
 
-    private int cash;
+    private static double cash;
 
     public Contabilidad() {
         cash = 0;
     }
 
-    public synchronized void addCash(int cash) {
+    public synchronized void addCash(double cash) {
         try {
             wait();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.cash += cash;
+        Contabilidad.cash += cash;
     }
 
-    public int getCash() {
+    public double getCash() {
         try {
             wait();
         } catch (InterruptedException e) {
