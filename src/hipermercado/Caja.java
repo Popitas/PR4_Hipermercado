@@ -3,15 +3,15 @@ package hipermercado;
 import java.util.Calendar;
 
 public class Caja extends Thread {
-    private static Cola<Cliente> queue;
-    private static Contabilidad accounting;
+    private Cola<Cliente> queue;
+    private Contabilidad accounting;
     private static int totalIDs = 0;
     private int id;
     private double cash;
 
     public Caja(Cola<Cliente> queue, Contabilidad accounting) {
-        Caja.queue = queue;
-        Caja.accounting = accounting;
+        this.queue = queue;
+        this.accounting = accounting;
         id = totalIDs++;
     }
 
@@ -33,15 +33,13 @@ public class Caja extends Thread {
     }
 
     private void printFinishedTime(Cliente client) {
-        Calendar instance = Calendar.getInstance();
-        System.out.println(client.dameNombre() + " terminó de ser atendido a las: " +
-                instance.get(Calendar.HOUR_OF_DAY));
+        System.out.println(getTimeStamp() + ": " + client.dameNombre() +
+                " termino de ser atendido en la caja " + id + ".");
     }
 
     private void printAttentionTime(Cliente client) {
-        Calendar instance = Calendar.getInstance();
-        System.out.println(client.dameNombre() + " fue atendido a las: " +
-                instance.get(Calendar.HOUR_OF_DAY));
+        System.out.println(getTimeStamp() + ": " + client.dameNombre() +
+                " comenzo a atenderse en la caja " + id + ".");
     }
 
     private void close() {
@@ -50,12 +48,18 @@ public class Caja extends Thread {
     }
 
     private void printCashAccountedTime() {
-        Calendar instance = Calendar.getInstance();
-        System.out.println("La caja " + id + " contabilizó " + cash + " a las " +
-                instance.get(Calendar.HOUR_OF_DAY));
+        System.out.println(getTimeStamp() + ": " +
+                "La caja " + id + " contabilizo " + cash + "€");
     }
 
     private long getAttentionMillis(Cliente cliente) {
         return (long)cliente.damePrecioCarro()*10;
+    }
+
+    private static String getTimeStamp() {
+        Calendar instance = Calendar.getInstance();
+        return instance.get(Calendar.HOUR_OF_DAY) + ":" +
+                instance.get(Calendar.MINUTE) + ":" +
+                instance.get(Calendar.SECOND);
     }
 }

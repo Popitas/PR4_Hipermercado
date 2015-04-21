@@ -9,20 +9,10 @@ public class Contabilidad {
     }
 
     public synchronized void addCash(double cash) {
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         Contabilidad.cash += cash;
     }
 
-    public double getCash() {
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public synchronized double getCash() {
         return cash;
     }
 }
